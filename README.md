@@ -75,7 +75,7 @@ builds.
 
 ## 🔀 ROS 2 Node workflow
 
-![ROS 2 Node Graph (Omnigraph Style)](docs/ros2_node_graph.png)
+![ROS 2 Node Graph (Omnigraph Style)](docs/Turtlebot3_Omnigraph.png)
 
 ---
 
