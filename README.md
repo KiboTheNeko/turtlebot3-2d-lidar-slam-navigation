@@ -75,53 +75,7 @@ builds.
 
 ## 🔀 ROS 2 Node workflow
 
-```
-        ┌───────────────────────── Gazebo Harmonic (gz-sim) ─────────────────────┐
-        │  gz-sim  office_arena.sdf / maze_arena.sdf  +  TurtleBot3 Burger      │
-        │  physics · gpu_lidar · DiffDrive                                     │
-        └───┬──────────────┬──────────────────┬───────────────────────────────┘
-            │ /clock       │ /scan_raw        │ /odometry
-            ▼              ▼                  ▼
-   ┌──────────────────────────────────────────────────────────────────────┐
-   │ ros_gz_bridge  «parameter_bridge»  (4 topics, sim time)              │
-   │   /clock · /scan_raw · /odom · /cmd_vel                              │
-   └──────┬──────────────────┬──────────────────────┬─────────────────────┘
-          │ /scan_raw        │ /odom                │ /cmd_vel
-          ▼                  ▼                      │
-   ┌──────────────┐   ┌──────────────┐   ┌──────────┴────────────────────┐
-   │scan_repub-   │   │ odom_to_tf   │   │ robot_state_publisher         │
-   │lisher        │   │ (odom→base_  │   │ (static TF base_footprint→     │
-   │ /scan_raw→   │   │  footprint)  │   │  base_link→base_scan)          │
-   │ /scan        │   └──────────────┘   └───────────────────────────────┘
-   └──────┬───────┘
-          │ /scan
-          ▼
-   ┌──────────────────────────────────────────────────────────────────────┐
-   │ async_slam_toolbox  (slam_toolbox, lifecycle)                        │
-   │   scan + TF ──► occupancy grid /map (transient_local)                │
-   └──────┬───────────────────────────────────────────────────────────────┘
-          │ /map
-          ▼
-   ┌────────────────────────────── Nav2 (nav2_container) ──────────────────┐
-   │ planner_server NavfnPlanner ──► global plan (global_costmap)          │
-   │ controller_server DWB        ──► local tracking (local_costmap)       │
-   │ collision_monitor  HardStopZone r=0.25 m «stop» + FootprintApproach   │
-   │ bt_navigator       /navigate_to_pose server (spin/backup recoveries)  │
-   │ velocity_smoother  limits jerk/accel on /cmd_vel                      │
-   └───────────▲────────────────────────────────────────────────────────────┘
-               │ NavigateToPose goals
-   ┌───────────┴────────────────────────────────────────────────────────────┐
-   │ frontier_explorer  (in-package)                                       │
-   │  /map → SAFE-free mask (0.30 m erosion) → frontier clusters →         │
-   │  farthest centroid-safe goal → NavigateToPose                         │
-   │  on abort/timeout: bad-goal recall · forgive budget · 3× no-frontier  │
-   │  → «EXPLORATION COMPLETE»                                             │
-   └─────────────────────────────────────────────────────────────────────────┘
-
-   Post-run verification:
-     map_saver_cli -f maps/<arena>_map  ──►  compare_map --pgm ... --yaml ...
-         --size <W> <H>  ──►  PASS/FAIL
-```
+![ROS 2 Node Graph (Omnigraph Style)](docs/ros2_node_graph.png)
 
 ---
 
