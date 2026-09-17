@@ -17,7 +17,7 @@ builds.
 
 ## 📺 Video Demo
 
-**YouTube: link coming soon** — placeholder for the walk-through video.
+**YouTube:** https://www.youtube.com/watch?v=RiFVC3jF5-8
 
 ---
 
